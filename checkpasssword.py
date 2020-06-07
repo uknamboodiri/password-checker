@@ -1,46 +1,38 @@
 import requests
-import hashlib
 import sys
+import hashlib
 
 
-# has the input
-# pull the 1st 5 chars
-# rest of the chars as tail
-# send the first 5 chars to API, get response
-
-def hash_the_given_password(pwd):
-    return hashlib.sha1(pwd.encode('UTF-8')).hexdigest().upper()
-
-
-def get_api_response(first_5_hash_chars):
-    response = requests.get(f'https://api.pwnedpasswords.com/range/{first_5_hash_chars}')
+def get_api_response(first_5_chars):
+    response = requests.get(f'https://api.pwnedpasswords.com/range/{first_5_chars}')
 
     if response.status_code != 200:
-        raise RuntimeError(f'Invalid request, kindly check your password {first_5_hash_chars}')
-    else:
-        return response
+        raise RuntimeError('Please check, something went wrong')
+
+    return response
 
 
-def check_if_used(pwd):
-    hashed_pwd = hash_the_given_password(pwd)
-    first_5_hash_chars, tail = hashed_pwd[:5], hashed_pwd[5:]
+def get_leak_count(pwd):
+    sha1_hashed_pwd = hashlib.sha1(pwd.encode('UTF-8')).hexdigest().upper()
+    first_5_chars, other_chars = sha1_hashed_pwd[:5], sha1_hashed_pwd[5:]
 
-    response = get_api_response(first_5_hash_chars)
-    hashes = (line.split(':') for line in response.text.splitlines())
+    matched_hash_strings_list = get_api_response(first_5_chars)
 
-    for h, count in hashes:
-        if tail == h:
+    hashed_list = (line.split(':') for line in matched_hash_strings_list.text.splitlines())
+    for h, count in hashed_list:
+        if h == other_chars:
             return count
+
     return 0
 
 
-def main(args):
-    for pwd in args:
-        count = check_if_used(pwd)
+def main(pwds):
+    for pwd in pwds:
+        count = get_leak_count(pwd)
         if count:
-            print(f'"{pwd}" discovered {count} times, you may NOT want to use this anywhere!!')
+            print(f'"{pwd}" discovered {count} times, you may NOT want to use anymore!')
         else:
-            print(f'{count} instances found, carry on! ')
+            print(f'"{pwd}" discovered {count} times, all good safe to use!')
 
     print('Done!')
 
