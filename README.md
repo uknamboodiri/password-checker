@@ -17,7 +17,7 @@ Hence I came up with this utility to check if password is indeed compromised and
 
 Modern application like netflix, fb, twitter, google all use "k anonymity", to know who you are and probably will never need to re-identify you but at the same time the data remains useful for their platform.
 
-We will first encrypt the password to SHA1 submit first 5-chars and use "k anonymity".
+We first encrypt the password to SHA1 submit first 5-chars and use "k anonymity".
 If the API returns a list of records matching first 5-chars, we could then locally compare and count number of occurances.
 
 That ways, we never submit our password to any website/API and we do everything locally.
