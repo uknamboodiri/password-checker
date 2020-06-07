@@ -4,7 +4,7 @@ Program to check if your password has been compromised
 
 ## Introduction
 
-How do we know for sure? If password we use is known to some server or sitting elsewhere?
+Can we know? If password we use is known to some server or sitting elsewhere?
 How many times has this question arisen in our minds?
 
 Yes there are web sites that tell if password has been pwned.
